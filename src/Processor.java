@@ -1,13 +1,12 @@
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.xml.internal.ws.api.pipe.FiberContextSwitchInterceptor;
-
-
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 
 public class Processor {
 
@@ -21,17 +20,17 @@ public class Processor {
 
         while (processOrderLoop) {
 
-
-            readIt(getFile());
-
-
-            moveIt();
             try {
                 Thread.sleep(5000l);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
+
+
+        moveIt(readIt(getFile()));
+
+
     }
 
     private File getFile() {
@@ -53,8 +52,7 @@ public class Processor {
         try (Scanner scanner = new Scanner(file)) {
             String workOrderJson = scanner.nextLine();
             System.out.println("Work Order\n\n"+mapper.readValue(workOrderJson, WorkOrder.class)+"\n\n");
-//            file.delete();
-
+            file.delete();
             return mapper.readValue(workOrderJson, WorkOrder.class);
         } catch (JsonParseException e) {
             System.out.println("Caught JsonParseException " + e.getMessage());
@@ -68,8 +66,20 @@ public class Processor {
 
 
 
-    private void moveIt() {
+    private void moveIt(WorkOrder workOrder) {
         // move work orders in map from one state to another
+        Set<WorkOrder> workOrders = new HashSet<>();
+        workOrders.add(workOrder);
+        switch (workOrder.status){
+            case INITIAL:
+                workOrder.setStatus(Status.ASSIGNED);
+            case ASSIGNED:
+                workOrder.setStatus(Status.IN_PROGRESS);
+            case IN_PROGRESS:
+                workOrder.setStatus(Status.DONE);
+            case DONE:
+        }
+
     }
 
 

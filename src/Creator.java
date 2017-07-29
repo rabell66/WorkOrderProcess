@@ -17,7 +17,6 @@ public class Creator {
     public void createWorkOrders() {
         boolean waitingForNewUser = true;
         WorkOrder workOrder = new WorkOrder();
-        String status = String.valueOf(workOrder.status);
         Scanner tanner = new Scanner(System.in);
         Scanner scanner = new Scanner((System.in));
         while (waitingForNewUser) {
@@ -30,6 +29,8 @@ public class Creator {
                 newId++;
                 System.out.println("Description of Work Order");
                 workOrder.setDescripton(tanner.nextLine());
+                workOrder.setStatus(Status.INITIAL);
+                System.out.println(workOrder.status);
                 workOrder.setId(workOrder.senderName + Integer.toString(newId));
                 System.out.printf("Order #: %s \nSender Name:  %s\n\t Work order:  %s\n\t Work order ID:  %s\n\t Work order Status:  %s\n\n",
                         newId, workOrder.senderName, workOrder.descripton, workOrder.id, workOrder.status);
